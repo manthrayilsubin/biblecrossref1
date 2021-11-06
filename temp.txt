@@ -1,0 +1,98 @@
+//tag verse name.chapter.versenumber in maenbv db ;Create table bible corss ref table in maENBV do inner join to get verse with cross reference.create redis db and feed verse as key and text pass verse and get value decide on amazon db or redis
+
+function qryDB(query, params) {
+    return new Promise(function(resolve, reject) {
+        if(params == undefined) params=[]
+
+        db.all(query, params, function(err, rows)  {
+            if(err) reject("Read error: " + err.message)
+            else {
+                resolve(rows)
+            }
+        })
+    }) 
+}
+
+
+
+function addverses(Name,word)
+{
+  verseRef[counter++]=Name+word;
+  //console.log(Name);
+}
+let verseRef=[];
+let counter=0;
+let promise=[];
+const sqlite3 = require('sqlite3').verbose();
+
+// open the database to get the new records
+let db = new sqlite3.Database('./BME.db', (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Connected to the malayalam english bible database.');
+});
+
+let mainverse='Gen.1.2';
+let sql = 'select OsisID||"."||chNum||"."||verseNum as Name,word from words inner join BibleBooks on BookId=bookNum and OsisID||"."||chNum||"."||verseNum ="'+mainverse+'"limit 10';
+
+let sqlRef='';
+let sqlRefWrd='';
+let refVerse='';
+
+
+
+async function queryData3(rowName)
+{
+sqlRef='select ToVerse from BibleCrossRef where FromVerse="'+rowName+'"';
+  const result3= await db.each(sqlRef, 
+  (error, row) => {
+  /*gets called for every row our query returns*/
+   // console.log(row);
+    refVerse=row.ToVerse;
+    promise[2]=queryData1(refVerse);
+
+
+  });
+  
+}
+async function queryData1(refVerse)
+{
+  sqlRefWrd='select OsisID||"."||chNum||"."||verseNum as Name,word from words inner join BibleBooks on BookId=bookNum and OsisID||"."||chNum||"."||verseNum ="'+refVerse+'"limit 10';
+
+const result1= await db.each(sqlRefWrd, 
+  (error, row) => {
+  /*gets called for every row our query returns*/
+   // console.log(refVerse);
+    //console.log(row);
+    addverses(row.Name,row.word);
+   
+
+  });
+ 
+}
+async function queryData()
+{
+const result= await db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach((row) => {
+   // console.log(row);
+    addverses(row.Name,row.word);
+promise[1]=queryData3(row.Name);
+
+
+  });
+
+});
+
+
+}
+promise[0]=queryData();
+
+
+//console.log("after everything subin babu");
+//console.log(verseRef);
+//db.close();
+
