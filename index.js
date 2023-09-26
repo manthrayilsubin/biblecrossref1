@@ -3,7 +3,7 @@ const redis = require('redis');
 const client = redis.createClient({
     host: 'redis-14431.c278.us-east-1-4.ec2.cloud.redislabs.com',
     port: 14431,
-    password: 'bibleVerse'
+    password: process.env.pass
 });
 
 function getRedis(verseName)
