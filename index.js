@@ -1,14 +1,15 @@
 
 const redis = require('redis');
 const client = redis.createClient({
-    host: 'redis-15765.c283.us-east-1-4.ec2.cloud.redislabs.com',
-    port: 15765,
+    host: 'redis-14431.c278.us-east-1-4.ec2.cloud.redislabs.com',
+    port: 14431,
     password: 'bibleVerse'
 });
 
 function getRedis(verseName)
  {
-client.get(verseName, (err, reply) => {
+   console.log(verseName.split("-")[0]);
+client.get(verseName.split("-")[0], (err, reply) => {
         if (err) throw err;
        
         addverses(verseName,reply); 
@@ -80,16 +81,19 @@ for(p in references)
   {
 addverses(referenceword[0].Name,referenceword[0].word); 
   }*/
-console
-  getRedis(references[p].ToVerse);
+getRedis(references[p].ToVerse);
  
 } 
 
 }
 let htmlStr='';
+let hrefStr='';
+let vers=[];
 for(indVerse in verseRef)
 {
-htmlStr=htmlStr+'<div>'+verseRef[indVerse]+'</div><hr>';
+vers=verseRef[indVerse].split('-');
+hrefStr='<a href="bibleverse?verse='+vers[0]+'">#</a>';
+htmlStr=htmlStr+'<div>'+hrefStr+verseRef[indVerse]+'</div><hr>';
 }
 try
 {
@@ -113,6 +117,7 @@ server.timeout = 1000*60*5;
 
 app.get('/bibleverse', (req, res) => {
    let mainverseloc=req.query.verse;
+  console.log(mainverseloc);
   mainapp(res,mainverseloc);
 });
 app.get('/', (req, res) => {
