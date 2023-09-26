@@ -8,7 +8,7 @@ const client = redis.createClient({
 
 function getRedis(verseName)
  {
-   console.log(verseName.split("-")[0]);
+  // console.log(verseName.split("-")[0]);
 client.get(verseName.split("-")[0], (err, reply) => {
         if (err) throw err;
        
@@ -61,14 +61,14 @@ async function mainapp(res,mainverseloc)
   sql = 'select OsisID||"."||chNum||"."||verseNum as Name,word from words inner join BibleBooks on BookId=bookNum and OsisID||"."||chNum||"."||verseNum ="'+mainverseloc+'"';
   counter=0;
 initialVerse = await qryDB(sql, [], function(row) {
-        console.log(row);    
+       // console.log(row);    
     });
 if(initialVerse[0]!=null)
 {
 addverses(initialVerse[0].Name,initialVerse[0].word);  
 sqlRef='select ToVerse from BibleCrossRef where FromVerse="'+initialVerse[0].Name+'"';
 references = await qryDB(sqlRef, [], function(row) {
-        console.log(row);    
+        //console.log(row);    
     });
 for(p in references)
 {
