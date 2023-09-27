@@ -66,7 +66,7 @@ initialVerse = await qryDB(sql, [], function(row) {
 if(initialVerse[0]!=null)
 {
 addverses(initialVerse[0].Name,initialVerse[0].word);  
-sqlRef='select ToVerse from BibleCrossRef where FromVerse="'+initialVerse[0].Name+'"';
+sqlRef='select ToVerse from biblecrosswithverseid where FromVerse="'+initialVerse[0].Name+'" ORDER by verseId asc';
 references = await qryDB(sqlRef, [], function(row) {
         //console.log(row);    
     });
