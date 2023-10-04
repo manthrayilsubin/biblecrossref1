@@ -17,6 +17,20 @@ client.get(verseName.split("-")[0], (err, reply) => {
 
  }
 
+   function firstFunction() {
+      return new Promise((resolve, reject) => {
+          let y = 0
+          setTimeout(() => {
+            for (i=0; i<100; i++) {
+               y++
+            }
+             console.log('Loop completed.')  
+             resolve(y)
+          }, 500)
+      })
+    }
+
+
 function qryDB(query, params) {
     return new Promise(function(resolve, reject) {
         if(params == undefined) params=[]
@@ -60,9 +74,11 @@ async function mainapp(res,mainverseloc)
 {
   sql = 'select OsisID||"."||chNum||"."||verseNum as Name,word from words inner join BibleBooks on BookId=bookNum and OsisID||"."||chNum||"."||verseNum ="'+mainverseloc+'"';
   counter=0;
-initialVerse = await qryDB(sql, [], function(row) {
-       // console.log(row);    
+initialVerse = await qryDB(sql, [], function(row) 
+    {
+        console.log(row);    
     });
+
 if(initialVerse[0]!=null)
 {
 addverses(initialVerse[0].Name,initialVerse[0].word);  
@@ -70,28 +86,21 @@ sqlRef='select ToVerse from biblecrosswithverseid where FromVerse="'+initialVers
 references = await qryDB(sqlRef, [], function(row) {
         //console.log(row);    
     });
+  
 for(p in references)
 {
-  //console.log(references[p].ToVerse);
-  /*sqlRefWrd='select OsisID||"."||chNum||"."||verseNum as Name,word from words inner join BibleBooks on BookId=bookNum and OsisID||"."||chNum||"."||verseNum ="'+references[p].ToVerse+'"';
-  referenceword = await qryDB(sqlRefWrd, [], function(row) {
-        console.log(row);    
-    });
-  if(referenceword[0]!=null)
-  {
-addverses(referenceword[0].Name,referenceword[0].word); 
-  }*/
-  //console.log(p); 
+   
 getRedis(references[p].ToVerse);
  
 } 
-
 }
+const result = await firstFunction();//add a delay
 let htmlStr='';
 let hrefStr='';
 let vers=[];
 for(indVerse in verseRef)
 {
+
 vers=verseRef[indVerse].split('-');
 hrefStr='<a href="bibleverse?verse='+vers[0]+'">#</a>';
 htmlStr=htmlStr+'<div>'+hrefStr+verseRef[indVerse]+'</div><hr>';
@@ -118,9 +127,8 @@ server.timeout = 1000*60*5;
 
 app.get('/bibleverse', (req, res) => {
    let mainverseloc=req.query.verse;
-  console.log(mainverseloc);
   mainapp(res,mainverseloc);
 });
 app.get('/', (req, res) => {
-  res.json({message: 'alive'});
+  res.json({message: 'alive use /bibleverse?verse=Gen.1.5'});
 });
