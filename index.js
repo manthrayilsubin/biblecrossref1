@@ -81,7 +81,7 @@ for(p in references)
   {
 addverses(referenceword[0].Name,referenceword[0].word); 
   }*/
-  console.log(p); 
+  //console.log(p); 
 getRedis(references[p].ToVerse);
  
 } 
