@@ -1,4 +1,4 @@
-//use https://replit.com/@SubinBabu/biblecrossref1 for pass in environment
+//use1 https://replit.com/@SubinBabu/biblecrossref1 for pass in environment
 const redis = require('redis');
 const client = redis.createClient({
     host: 'redis-14431.c278.us-east-1-4.ec2.cloud.redislabs.com',
